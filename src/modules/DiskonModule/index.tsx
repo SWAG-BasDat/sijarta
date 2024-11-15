@@ -1,5 +1,5 @@
 import React from "react";
-import { DiskonPageSection } from "./sections/DiskonPage";
+import { DiskonPageSection } from "./sections/DiskonPageSection";
 
 const DiskonModule = () => {
   return <DiskonPageSection />;
