@@ -1,6 +1,6 @@
-import { Promo, Voucher } from "./interface";
+import { PromoProps, VoucherProps } from "./interface";
 
-export const VOUCHERS: Voucher[] = [
+export const VOUCHERS: VoucherProps[] = [
   {
     kode: "DISC10",
     potongan: "10%",
@@ -27,7 +27,7 @@ export const VOUCHERS: Voucher[] = [
   },
 ];
 
-export const PROMOS: Promo[] = [
+export const PROMOS: PromoProps[] = [
   {
     kode: "PROMO1",
     tanggalAkhirBerlaku: "2024-12-31",
@@ -41,3 +41,28 @@ export const PROMOS: Promo[] = [
     tanggalAkhirBerlaku: "2024-12-31",
   },
 ];
+
+export const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(amount);
+};
+
+export const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("id-ID", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+export const calculateExpiryDate = (days: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  });
+};
