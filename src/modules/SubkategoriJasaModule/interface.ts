@@ -11,12 +11,17 @@ export interface Testimonial {
     rating: number;
 }
 
+export interface Worker {
+    id: number;
+    name: string;
+}
+
 export interface SubkategoriProps {
     subcategory: string;
     category: string;
     description: string;
     services: Service[];
-    workers: string[];
+    workers: Worker[];
     testimonials: Testimonial[];
 }
 
@@ -24,4 +29,4 @@ export interface PemesananModalProps {
     service: Service;
     onClose: () => void;
     onSubmit: (serviceName: string, userName: string) => void;
-  }
+}
