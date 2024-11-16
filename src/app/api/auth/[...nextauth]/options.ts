@@ -15,7 +15,7 @@ export const options: NextAuthOptions = {
                     label: "Password:",
                     type: "password",
                     placeholder: "Your password"
-                }
+                },
             },
             async authorize(credentials) {
                 // This is where you need to retrieve user data 
