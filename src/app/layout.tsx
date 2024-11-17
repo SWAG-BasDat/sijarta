@@ -27,7 +27,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
-          <Nav />
+          <div style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
+            <Nav />
+          </div>
           {children}
         </SessionProvider>
       </body>

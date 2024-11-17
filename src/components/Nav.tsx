@@ -40,10 +40,8 @@ const Nav = () => {
 
     return (
       <Link href={href} className={`
-        flex items-center gap-2 px-4 py-2 rounded-lg transition-colors
-        ${isActive 
-          ? 'bg-blue-700 text-white' 
-          : 'text-blue-100 hover:bg-blue-700/50'}
+        flex whitespace-nowrap items-center w-auto gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+        ${isActive ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700/50'}
       `}>
         {Icon && <Icon className="w-5 h-5" />}
         {children}
@@ -61,8 +59,8 @@ const Nav = () => {
     if (!session?.user) {
       return (
         <>
-          <NavLink href="/auth/login" icon={User}>Login</NavLink>
-          <NavLink href="/auth/register" icon={User}>Register</NavLink>
+          <NavLink href="/login" icon={User}>Login</NavLink>
+          <NavLink href="/register" icon={User}>Register</NavLink>
         </>
       );
     }
@@ -75,7 +73,7 @@ const Nav = () => {
       <>
         <div className="px-4 py-2 text-yellow-400">
           <div className="font-semibold">{isWorker ? 'Pekerja' : 'Pengguna'}</div>
-          <div className="text-sm">{userName}</div>
+          <div className="text-sm whitespace-nowrap">{userName}</div>
         </div>
 
         {/* Common Links */}
@@ -118,10 +116,8 @@ const Nav = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-4 flex items-center space-x-4">
-              {renderNavLinks()}
-            </div>
+          <div className="hidden md:flex items-center space-x-6">
+            {renderNavLinks()}
           </div>
 
           {/* Mobile menu button */}

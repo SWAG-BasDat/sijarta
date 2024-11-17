@@ -1,7 +1,7 @@
 import React from "react";
 import { RegisterSection } from "./sections/RegisterSection";
 
-const AuthModule = () => {
+const RegisterModule = () => {
   return (
     <div>
       <RegisterSection />
@@ -9,4 +9,4 @@ const AuthModule = () => {
   );
 };
 
-export default AuthModule;
+export default RegisterModule;

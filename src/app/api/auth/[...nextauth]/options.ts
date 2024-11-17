@@ -19,7 +19,7 @@ export const options: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        phoneNum: {
+        noHP: {
           label: "Phone Number:",
           type: "text",
           placeholder: "Your phone number",
@@ -41,6 +41,7 @@ export const options: NextAuthOptions = {
           alamat: "Test Address",
           isActive: true,
           isPekerja: false,
+          saldoMyPay: 0,
         };
 
         const pekerja: SijartaUser = {
@@ -56,16 +57,20 @@ export const options: NextAuthOptions = {
           namaBank: "Test Bank",
           noRekening: "1234567890",
           npwp: "1234567890",
-          urlFoto: "https://example.com/image.jpg",
+          urlFoto: "https://github.com/widaputri.png",
+          saldoMyPay: 0,
+          jmlPesananSelesai: 0,
+          rating: 0,
+          kategori: ["Test Category", "Test Category 2", "Test Category 3"],
         };
 
         if (
-          credentials?.phoneNum === pengguna.noHP &&
+          credentials?.noHP === pengguna.noHP &&
           credentials?.password === pengguna.password
         ) {
           return pengguna;
         } else if (
-          credentials?.phoneNum === pekerja.noHP &&
+          credentials?.noHP === pekerja.noHP &&
           credentials?.password === pekerja.password
         ) {
           return pekerja;
@@ -79,7 +84,7 @@ export const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const customUser = user as SijartaUser; // Type assertion
+        const customUser = user as SijartaUser;
         token.id = customUser.id;
         token.noHP = customUser.noHP;
         token.nama = customUser.nama;
@@ -92,6 +97,10 @@ export const options: NextAuthOptions = {
         token.noRekening = customUser.noRekening;
         token.npwp = customUser.npwp;
         token.urlFoto = customUser.urlFoto;
+        token.saldoMyPay = customUser.saldoMyPay;
+        token.jmlPesananSelesai = customUser.jmlPesananSelesai;
+        token.rating = customUser.rating;
+        token.kategori = customUser.kategori;
       }
       return token;
     },
@@ -112,6 +121,10 @@ export const options: NextAuthOptions = {
           noRekening: token.noRekening,
           npwp: token.npwp,
           urlFoto: token.urlFoto,
+          saldoMyPay: token.saldoMyPay,
+          jmlPesananSelesai: token.jmlPesananSelesai,
+          rating: token.rating,
+          kategori: token.kategori
         } as SijartaUser;
       }
 
@@ -130,4 +143,8 @@ export const options: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+
+  pages : {
+    signIn: '/login',
+  }
 };

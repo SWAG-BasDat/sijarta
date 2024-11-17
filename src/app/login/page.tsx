@@ -1,9 +1,9 @@
 import React from 'react'
-import AuthModule from '../../modules/AuthModule'
+import LoginModule from '../../modules/LoginModule'
 
 const page = () => {
   return (
-    <AuthModule />
+    <LoginModule />
   )
 }
 

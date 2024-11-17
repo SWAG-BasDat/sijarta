@@ -8,12 +8,16 @@ export interface SijartaUser extends User {
   jenisKelamin: "P" | "L";
   tanggalLahir: Date;
   alamat: string;
+  saldoMyPay: number;
   isActive: boolean;
   isPekerja: boolean;
   namaBank?: string;
   noRekening?: string;
   npwp?: string;
   urlFoto?: string;
+  rating?: number;
+  kategori?: Array<string>;
+  jmlPesananSelesai?: number;
 }
 
 declare module 'next-auth' {
