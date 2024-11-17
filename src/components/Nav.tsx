@@ -84,13 +84,13 @@ const Nav = () => {
         {/* Role-Specific Links */}
         {isWorker ? (
           <>
-            <NavLink href="/my-jobs" icon={Briefcase}>Kelola Pekerjaan Saya</NavLink>
-            <NavLink href="/job-status" icon={Clock}>Kelola Status Pekerjaan</NavLink>
+            <NavLink href="/pekerjaanJasa" icon={Briefcase}>Kelola Pekerjaan Saya</NavLink>
+            <NavLink href="/statusPekerjaanJasa" icon={Clock}>Kelola Status Pekerjaan</NavLink>
           </>
         ) : (
           <>
             <NavLink href="/orders" icon={ShoppingBag}>Kelola Pesanan Saya</NavLink>
-            <NavLink href="/discounts" icon={Percent}>Diskon</NavLink>
+            <NavLink href="/diskon" icon={Percent}>Diskon</NavLink>
           </>
         )}
 
