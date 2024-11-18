@@ -2,7 +2,6 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
-import { Testimonial } from "../interface";
 import { CONTOH_TESTI } from "../constant";
 
 const TestimoniSection = () => {
