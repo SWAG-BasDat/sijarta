@@ -84,7 +84,7 @@ const StatusPekerjaanJasaSection = () => {
             <div className="flex items-end">
               <button
                 onClick={handleSearch}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                className="bg-yellow-300 text-black px-4 py-2 rounded-md hover:bg-yellow-500"
               >
                 Search
               </button>
@@ -121,7 +121,7 @@ const StatusPekerjaanJasaSection = () => {
                   pesanan.status !== "Pesanan dibatalkan" && (
                     <button
                       onClick={() => handleUpdateStatus(pesanan.id)}
-                      className="mt-4 w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                      className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                     >
                       Update Status
                     </button>
