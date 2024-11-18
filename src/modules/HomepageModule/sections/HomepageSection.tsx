@@ -12,18 +12,17 @@ export const HomepageSection = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const router = useRouter();
 
-  // Filter kategori berdasarkan dropdown dan search bar
-  const filteredCategories = categories.filter(
-    (category) =>
-      (!selectedCategory || category.id === selectedCategory) &&
-      category.subcategories.some((subcategory) =>
-        subcategory.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+  // Filter categories based on the dropdown and search bar
+  const filteredCategories = categories.filter((category) =>
+    (!selectedCategory || category.id === selectedCategory) &&
+    category.subcategories.some((subcategory) =>
+      subcategory.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
-  // Handle redirect ke halaman Subkategori Jasa & Sesi Layanan
-  const handleRedirect = (subcategory: string) => {
-    router.push(`/subcategories/${subcategory}`);
+  // Handle redirect to the subcategory page
+  const handleRedirect = (subcategoryId: number) => {
+    router.push(`/subkategorijasa/${subcategoryId}`);
   };
 
   return (
@@ -48,7 +47,9 @@ export const HomepageSection = () => {
               onChange={(e) => setSelectedCategory(Number(e.target.value) || null)}
               className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 cursor-pointer transition-all hover:border-blue-600 appearance-none"
             >
-              <option value="" className="py-2 px-4">Semua Kategori</option>
+              <option value="" className="py-2 px-4">
+                Semua Kategori
+              </option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id} className="py-2 px-4">
                   {category.name}
@@ -78,17 +79,19 @@ export const HomepageSection = () => {
               <div className="flex items-center gap-3">
                 <Tag className="w-6 h-6 text-white" />
                 <h2 className="text-2xl font-semibold text-white">
-                    Daftar Kategori dan Subkategori Jasa
+                  Daftar Kategori dan Subkategori Jasa
                 </h2>
               </div>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCategories.length === 0 && !searchTerm && (
-                  <div className="text-center text-gray-500">Tidak ada kategori.</div>
+                {filteredCategories.length === 0 && (
+                  <div className="text-center text-gray-500">
+                    Tidak ada kategori.
+                  </div>
                 )}
 
-                {/* Show filtered categories */}
+                {/* Render filtered categories */}
                 {filteredCategories.map((category) => (
                   <Card
                     key={category.id}
@@ -106,15 +109,17 @@ export const HomepageSection = () => {
                       <ul className="space-y-4">
                         {category.subcategories
                           .filter((subcategory) =>
-                            subcategory.toLowerCase().includes(searchTerm.toLowerCase())
+                            subcategory.name
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase())
                           )
                           .map((subcategory) => (
                             <li
-                              key={subcategory}
-                              onClick={() => handleRedirect(subcategory)}
+                              key={subcategory.id}
+                              onClick={() => handleRedirect(subcategory.id)}
                               className="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline"
                             >
-                              {subcategory}
+                              {subcategory.name}
                             </li>
                           ))}
                       </ul>

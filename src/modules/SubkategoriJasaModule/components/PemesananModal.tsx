@@ -1,13 +1,15 @@
-// PemesananModal.tsx
-
 import React, { useState } from "react";
 import { PemesananModalProps } from "../interface";
 
 export const PemesananModal = ({ service, onClose, onSubmit }: PemesananModalProps) => {
   const [userName, setUserName] = useState("");
+  const [tanggalPemesanan, setTanggalPemesanan] = useState("");
+  const [kodeDiskon, setKodeDiskon] = useState("");
+  const [metodePembayaran, setMetodePembayaran] = useState("");
 
   const handleSubmit = () => {
-    onSubmit(service.session, userName);  // Use service.session to pass the session name
+    // Ensure you only pass the required arguments (serviceName and userName)
+    onSubmit(service.session, userName);
     onClose();
   };
 
@@ -32,6 +34,9 @@ export const PemesananModal = ({ service, onClose, onSubmit }: PemesananModalPro
         <h3 className="text-xl font-semibold text-blue-900 mb-4 text-center">
           {service.session} - Rp {service.price}
         </h3>
+
+        {/* Nama Anda */}
+        <label className="block mb-2 text-gray-700 font-medium">Nama Anda:</label>
         <input
           type="text"
           placeholder="Nama Anda"
@@ -39,6 +44,50 @@ export const PemesananModal = ({ service, onClose, onSubmit }: PemesananModalPro
           onChange={(e) => setUserName(e.target.value)}
           className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 mb-4"
         />
+
+        {/* Tanggal Pemesanan */}
+        <label className="block mb-2 text-gray-700 font-medium">
+          Tanggal Pemesanan:
+        </label>
+        <input
+          type="date"
+          value={tanggalPemesanan}
+          onChange={(e) => setTanggalPemesanan(e.target.value)}
+          className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 mb-4"
+        />
+
+        {/* Kode Diskon */}
+        <label className="block mb-2 text-gray-700 font-medium">Diskon:</label>
+        <input
+          type="text"
+          placeholder="Kode Diskon"
+          value={kodeDiskon}
+          onChange={(e) => setKodeDiskon(e.target.value)}
+          className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 mb-4"
+        />
+
+        {/* Total Pembayaran */}
+        <p className="mb-4 text-gray-700 font-medium">
+          Total Pembayaran: <span className="font-bold">Rp {service.price}</span>
+        </p>
+
+        {/* Metode Pembayaran */}
+        <label className="block mb-2 text-gray-700 font-medium">
+          Metode Pembayaran:
+        </label>
+        <select
+          value={metodePembayaran}
+          onChange={(e) => setMetodePembayaran(e.target.value)}
+          className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 mb-4"
+        >
+          <option value="" disabled>
+            Pilih Metode
+          </option>
+          <option value="Transfer Bank">Transfer Bank</option>
+          <option value="E-Wallet">E-Wallet</option>
+          <option value="COD">COD</option>
+        </select>
+
         <div className="flex justify-between">
           <button
             onClick={handleSubmit}
