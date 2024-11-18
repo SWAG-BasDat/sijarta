@@ -89,7 +89,7 @@ const Nav = () => {
           </>
         ) : (
           <>
-            <NavLink href="/orders" icon={ShoppingBag}>Kelola Pesanan Saya</NavLink>
+            <NavLink href="/pemesananJasa" icon={ShoppingBag}>Kelola Pesanan Saya</NavLink>
             <NavLink href="/diskon" icon={Percent}>Diskon</NavLink>
           </>
         )}
