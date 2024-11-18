@@ -11,15 +11,7 @@ export const subkategoriData = {
         { id: 1, name: "Worker 1" },
         { id: 2, name: "Worker 2" },
       ],
-      testimonials: [
-        {
-          user: "User A",
-          text: "Great service!",
-          date: "2024-07-18",
-          worker: "Worker 1",
-          rating: 5,
-        },
-      ],
+      testimonials: [],
     },
     pekerjaPage: {
       subcategory: "Subkategori Jasa 7",
@@ -30,18 +22,10 @@ export const subkategoriData = {
         { session: "Sesi Layanan 4", price: 250000 },
       ],
       workers: [
-        { id: 1, name: "Worker A" },
-        { id: 2, name: "Worker B" },
+        { id: 1, name: "John Doe" },
+        { id: 2, name: "Jane Smith" },
       ],
-      testimonials: [
-        {
-          user: "User B",
-          text: "Excellent work!",
-          date: "2024-08-28",
-          worker: "Worker 4",
-          rating: 4,
-        },
-      ],
+      testimonials: [],
     },
   };
   

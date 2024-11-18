@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { SubkategoriProps, Service } from "../interface";
 import { useRouter } from "next/navigation";
 import { PemesananModal } from "../components/PemesananModal";
+import { CONTOH_TESTI } from "@/modules/TestimoniModule/constant"
 
 interface Props {
   data: SubkategoriProps;
@@ -29,8 +30,8 @@ export const PenggunaPage = ({ data }: Props) => {
   };
 
   const handleProfilPekerja = (workerId: number) => {
-    router.push(`/profile/${workerId}`); // Redirect to the worker's profile page using worker's ID
-  };
+    router.push(`/subkategorijasa/profile/${workerId}`); // Redirect to the worker's profile page
+  };  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -75,12 +76,12 @@ export const PenggunaPage = ({ data }: Props) => {
             <ul className="space-y-4">
               {data.workers.map((worker) => (
                 <li
-                  key={worker.id}
-                  className="text-gray-900 cursor-pointer hover:text-blue-600"
-                  onClick={() => handleProfilPekerja(worker.id)}
+                    key={worker.id}
+                    className="text-gray-900 cursor-pointer hover:text-blue-600"
+                    onClick={() => handleProfilPekerja(worker.id)} // Navigate to worker's profile
                 >
-                  {worker.name}
-                </li>
+                    {worker.name}
+                </li>              
               ))}
             </ul>
           </div>

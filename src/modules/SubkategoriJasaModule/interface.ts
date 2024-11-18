@@ -30,3 +30,12 @@ export interface PemesananModalProps {
     onClose: () => void;
     onSubmit: (serviceName: string, userName: string) => void;
 }
+
+export interface ProfilePekerjaProps {
+    name: string;
+    rating: number;
+    completedOrders: number;
+    phoneNumber: string;
+    dateOfBirth: string;
+    address: string;
+}
