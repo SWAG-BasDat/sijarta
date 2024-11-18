@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { categories } from "../constant";
 import { Card, CardContent } from "@/components/ui/card"; // Assuming Card components are available
 import { Badge } from "@/components/ui/badge"; // Assuming Badge components are available
-import { Tag, Search, ChevronDown } from "lucide-react"; // Add ChevronDown icon from lucide-react
+import { Tag, Search, ChevronDown, List } from "lucide-react"; // Add ChevronDown icon from lucide-react
 
 export const HomepageSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -77,7 +77,7 @@ export const HomepageSection = () => {
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="p-6 bg-blue-900">
               <div className="flex items-center gap-3">
-                <Tag className="w-6 h-6 text-white" />
+                <List className="w-6 h-6 text-white" />
                 <h2 className="text-2xl font-semibold text-white">
                   Daftar Kategori dan Subkategori Jasa
                 </h2>
