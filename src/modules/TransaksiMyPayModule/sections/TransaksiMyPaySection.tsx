@@ -8,11 +8,7 @@ import { Wallet } from "lucide-react";
 import { KATEGORI_TR_MYPAY, KATEGORI_JASA, NAMA_BANK } from "../constant";
 import { KategoriMyPay, TransaksiMyPayProps, Transaction } from "../interface";
 
-export const TransaksiMyPay: React.FC<TransaksiMyPayProps> = ({
-  userType,
-  userName,
-  userBalance,
-}) => {
+export const TransaksiMyPay: React.FC<TransaksiMyPayProps> = ({ userType }) => {
   const [selectedCategory, setSelectedCategory] =
     useState<KategoriMyPay | null>(null);
   const [amount, setAmount] = useState("");
