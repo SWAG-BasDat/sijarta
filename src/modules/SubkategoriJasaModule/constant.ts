@@ -44,4 +44,12 @@ export const subkategoriData = {
       ],
     },
   };
-  
+
+export const WorkerProfile = {
+  name: "Andi Budi",
+  rating: 5,
+  completedOrders: 25,
+  phoneNumber: "081344768979",
+  birthDate: "01/01/1990",
+  address: "Depok, Indonesia",
+};
