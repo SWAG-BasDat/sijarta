@@ -29,7 +29,7 @@ export const PenggunaPage = ({ data }: Props) => {
   };
 
   const handleProfilPekerja = (workerId: number) => {
-    router.push(`/subkategoriJasa/profile`); // Redirect to the worker's profile page
+    router.push(`/subkategorijasa/profile`); // Redirect to the worker's profile page
   };  
 
   return (
