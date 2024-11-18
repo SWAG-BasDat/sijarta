@@ -30,6 +30,7 @@ export const PESANAN_DUMMY = [
     tanggalPekerjaan: "2024-11-02",
     kategoriId: "1",
     subkategoriId: "1-1",
+    statusKerjakan: "Mencari pekerja terdekat",
   },
   {
     id: "2",
@@ -40,6 +41,7 @@ export const PESANAN_DUMMY = [
     tanggalPekerjaan: "2024-11-04",
     kategoriId: "1",
     subkategoriId: "1-2",
+    statusKerjakan: "Mencari pekerja terdekat",
   },
   {
     id: "3",
@@ -50,5 +52,6 @@ export const PESANAN_DUMMY = [
     tanggalPekerjaan: "2024-11-06",
     kategoriId: "2",
     subkategoriId: "2-1",
+    statusKerjakan: "Mencari pekerja terdekat",
   },
 ];
