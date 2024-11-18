@@ -7,22 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import { MYPAYS } from "../constant";
 import type { MyPayProps } from "../interface";
-import { useRouter } from "next/navigation";
-import Link from 'next/link'; 
+import Link from "next/link";
 
 export const MyPaySection = () => {
   const phoneNumber = "08123456789";
   const balance = 150000;
-  
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-12 px-4">
         {/* Header Section */}
         <div className="flex flex-col items-center mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4 text-blue-900">
-            MyPay Saldo
-          </h1>
+          <h1 className="text-4xl font-bold mb-4 text-blue-900">MyPay Saldo</h1>
           <div className="mt-4 flex items-center gap-2 bg-white p-3 rounded-lg shadow">
             <Wallet className="w-5 h-5 text-blue-900" />
             <span className="font-medium">No HP: {phoneNumber}</span>
@@ -34,9 +30,7 @@ export const MyPaySection = () => {
             </span>
           </div>
           <Button className="mt-4 bg-blue-900 hover:bg-blue-800 text-white">
-            <Link href="/transaksiMyPay">
-            Lakukan Transaksi
-            </Link>
+            <Link href="/transaksiMyPay">Lakukan Transaksi</Link>
           </Button>
         </div>
 
@@ -52,7 +46,10 @@ export const MyPaySection = () => {
           </div>
           <div className="p-6">
             {MYPAYS.map((transaction: MyPayProps, index) => (
-              <Card key={index} className="border hover:border-blue-900 transition-all mb-4">
+              <Card
+                key={index}
+                className="border hover:border-blue-900 transition-all mb-4"
+              >
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-4">
                     <Badge
@@ -61,7 +58,13 @@ export const MyPaySection = () => {
                     >
                       {transaction.kategoriTransaksi}
                     </Badge>
-                    <span className={`flex items-center gap-1 font-medium ${transaction.nominal > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <span
+                      className={`flex items-center gap-1 font-medium ${
+                        transaction.nominal > 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
                       {transaction.nominal > 0 ? (
                         <TrendingUp className="w-4 h-4" />
                       ) : (
