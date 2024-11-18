@@ -26,5 +26,14 @@ export const pesanan = [
       status: "Mencari Pekerja Terdekat",
       hasTestimonial: false,
     },
+    {
+        id: 4,
+        subkategori: "Subkategori Jasa 4",
+        sesiLayanan: "Sesi Layanan 4",
+        harga: 1070000,
+        namaPekerja: "Andi Sulistianto",
+        status: "Pesanan Selesai",
+        hasTestimonial: true,
+      },
 ];
   
