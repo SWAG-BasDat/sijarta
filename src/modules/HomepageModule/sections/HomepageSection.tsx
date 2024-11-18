@@ -22,7 +22,7 @@ export const HomepageSection = () => {
 
   // Handle redirect to the subcategory page
   const handleRedirect = (subcategoryId: number) => {
-    router.push(`/subkategorijasa/${subcategoryId}`);
+    router.push(`/subkategoriJasa`);
   };
 
   return (
