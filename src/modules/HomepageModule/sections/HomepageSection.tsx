@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { categories } from "../constant";
 import { Card, CardContent } from "@/components/ui/card"; // Assuming Card components are available
 import { Badge } from "@/components/ui/badge"; // Assuming Badge components are available
-import { Tag, Search, ChevronDown, List } from "lucide-react"; // Add ChevronDown icon from lucide-react
+import { Search, ChevronDown, List } from "lucide-react"; // Add ChevronDown icon from lucide-react
 
 export const HomepageSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -13,11 +13,12 @@ export const HomepageSection = () => {
   const router = useRouter();
 
   // Filter categories based on the dropdown and search bar
-  const filteredCategories = categories.filter((category) =>
-    (!selectedCategory || category.id === selectedCategory) &&
-    category.subcategories.some((subcategory) =>
-      subcategory.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  const filteredCategories = categories.filter(
+    (category) =>
+      (!selectedCategory || category.id === selectedCategory) &&
+      category.subcategories.some((subcategory) =>
+        subcategory.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
   );
 
   // Handle redirect to the subcategory page
@@ -44,14 +45,20 @@ export const HomepageSection = () => {
           <div className="relative w-full md:w-1/3">
             <select
               value={selectedCategory || ""}
-              onChange={(e) => setSelectedCategory(Number(e.target.value) || null)}
+              onChange={(e) =>
+                setSelectedCategory(Number(e.target.value) || null)
+              }
               className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 cursor-pointer transition-all hover:border-blue-600 appearance-none"
             >
               <option value="" className="py-2 px-4">
                 Semua Kategori
               </option>
               {categories.map((category) => (
-                <option key={category.id} value={category.id} className="py-2 px-4">
+                <option
+                  key={category.id}
+                  value={category.id}
+                  className="py-2 px-4"
+                >
                   {category.name}
                 </option>
               ))}
