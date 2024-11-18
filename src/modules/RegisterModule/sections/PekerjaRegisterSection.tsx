@@ -48,10 +48,11 @@ const PekerjaRegisterSection = () => {
                     name="namaBank"
                     className="w-full p-3 border border-blue-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     >
-                    <option value="bca">BCA</option>
-                    <option value="bni">BNI</option>
-                    <option value="bri">BRI</option>
-                    <option value="mandiri">Mandiri</option>
+                    <option value="gopay">GoPay</option>
+                    <option value="ovo">OVO</option>
+                    <option value="bca">Virtual Account BCA</option>
+                    <option value="bni">Virtual Account BNI</option>
+                    <option value="mandiri">Virtual Account Mandiri</option>
                     </select>
                     <input
                     type="text"
