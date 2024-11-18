@@ -111,11 +111,11 @@ export const PenggunaPage = ({ data }: Props) => {
                   <div className="text-gray-600 mb-4">{testimonial.text}</div>
                   <div className="flex items-center">
                     <span className="text-yellow-500 font-semibold">
-                      Rating: {testimonial.rating}/5
+                      Rating: {testimonial.rating}/10
                     </span>
                     <div className="ml-2">
                       {/* Optional star rating icon */}
-                      {[...Array(5)].map((_, i) => (
+                      {[...Array(10)].map((_, i) => (
                         <span
                           key={i}
                           className={`${
