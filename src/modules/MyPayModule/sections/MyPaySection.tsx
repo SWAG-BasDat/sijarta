@@ -1,5 +1,3 @@
-
-
 "use client";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import { MYPAYS } from "../constant";
 import type { MyPayProps } from "../interface";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
+import Link from 'next/link'; 
 
 export const MyPaySection = () => {
   const phoneNumber = "08123456789";
@@ -35,7 +34,9 @@ export const MyPaySection = () => {
             </span>
           </div>
           <Button className="mt-4 bg-blue-900 hover:bg-blue-800 text-white">
+            <Link href="/transaksiMyPay">
             Lakukan Transaksi
+            </Link>
           </Button>
         </div>
 

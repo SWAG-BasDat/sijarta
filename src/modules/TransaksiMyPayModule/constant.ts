@@ -1,21 +1,16 @@
-// TransaksiMyPayModule/constant.ts
+export const KATEGORI_TR_MYPAY = [
+  "TopUp MyPay",
+  "Pembayaran Jasa",
+  "Transfer MyPay",
+  "Withdrawal",
+];
 
-export const MYPAY_CATEGORIES = [
-    "TopUp MyPay",
-    "Pembayaran Jasa",
-    "Transfer MyPay",
-    "Withdrawal",
-  ];
-  
-  export const SERVICES = [
-    "Jasa A",
-    "Jasa B",
-    "Jasa C",
-  ];
-  
-  export const BANKS = [
-    "Bank A",
-    "Bank B",
-    "Bank C",
-  ];
-  
+export const KATEGORI_JASA = [
+  "Home Cleaning",
+  "Deep Cleaning",
+  "Service AC",
+  "Massage",
+  "Hair Care",
+];
+
+export const NAMA_BANK = ["BCA", "Mandiri", "BNI", "BRI", "CIMB"];
