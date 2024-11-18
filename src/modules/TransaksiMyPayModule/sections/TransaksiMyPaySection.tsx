@@ -13,7 +13,8 @@ export const TransaksiMyPay: React.FC<TransaksiMyPayProps> = ({
   userName,
   userBalance,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<KategoriMyPay | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<KategoriMyPay | null>(null);
   const [amount, setAmount] = useState("");
   const [service, setService] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -124,10 +125,7 @@ export const TransaksiMyPay: React.FC<TransaksiMyPayProps> = ({
         return (
           <div className="space-y-4">
             <label className="font-medium text-gray-700">Nama Bank:</label>
-            <Select
-              value={bank}
-              onChange={(e) => setBank(e.target.value)}
-            >
+            <Select value={bank} onChange={(e) => setBank(e.target.value)}>
               {NAMA_BANK.map((bank) => (
                 <SelectOption key={bank} value={bank}>
                   {bank}
@@ -170,10 +168,14 @@ export const TransaksiMyPay: React.FC<TransaksiMyPayProps> = ({
             </div>
           </div>
           <CardContent className="p-6">
-            <label className="font-medium text-gray-700">Kategori Transaksi:</label>
+            <label className="font-medium text-gray-700">
+              Kategori Transaksi:
+            </label>
             <Select
               value={selectedCategory || ""}
-              onChange={(e) => setSelectedCategory(e.target.value as KategoriMyPay)}
+              onChange={(e) =>
+                setSelectedCategory(e.target.value as KategoriMyPay)
+              }
               className="mb-4"
             >
               {KATEGORI_TR_MYPAY.filter((category) => {

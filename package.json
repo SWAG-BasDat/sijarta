@@ -18,6 +18,8 @@
     "lucide-react": "^0.456.0",
 <<<<<<< Updated upstream
     "next": "14.2.16",
+    "next-auth": "^4.24.10",
+    "openssl": "^2.0.0",
 =======
     "next": "^15.0.3",
     "next-auth": "^4.24.10",

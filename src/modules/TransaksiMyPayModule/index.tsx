@@ -3,7 +3,11 @@ import TransaksiMyPay from "./sections/TransaksiMyPaySection";
 
 const TransaksiMyPayModule = () => {
   return (
-    <TransaksiMyPay userType="Pengguna" userName="John Doe" userBalance={150000} />
+    <TransaksiMyPay
+      userType="Pengguna"
+      userName="John Doe"
+      userBalance={150000}
+    />
   );
 };
 

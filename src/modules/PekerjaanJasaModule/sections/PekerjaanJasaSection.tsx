@@ -10,19 +10,23 @@ export const PekerjaanJasaSection = () => {
   const [selectedSubkategori, setSelectedSubkategori] = useState<string | null>(
     null
   );
-  const [filteredPesanan, setFilteredPesanan] = useState<Pesanan[]>(PESANAN_DUMMY);
+  const [filteredPesanan, setFilteredPesanan] =
+    useState<Pesanan[]>(PESANAN_DUMMY);
 
   const handleUpdateStatus = (pesananId: string) => {
     setFilteredPesanan((prevPesanan) =>
       prevPesanan.map((pesanan) => {
-        if (pesanan.id === pesananId && pesanan.statusKerjakan === "Mencari pekerja terdekat") {
+        if (
+          pesanan.id === pesananId &&
+          pesanan.statusKerjakan === "Mencari pekerja terdekat"
+        ) {
           return { ...pesanan, statusKerjakan: "Menunggu pekerja terdekat" };
         }
         return pesanan;
       })
     );
   };
-  
+
   const handleSearch = () => {
     const filtered = PESANAN_DUMMY.filter((pesanan) => {
       const matchKategori =
@@ -34,7 +38,6 @@ export const PekerjaanJasaSection = () => {
     setFilteredPesanan(filtered);
   };
 
-
   return (
     <section className="py-8">
       <div className="container mx-auto">
@@ -44,7 +47,10 @@ export const PekerjaanJasaSection = () => {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Dropdown Kategori */}
             <div className="flex-1">
-              <label htmlFor="kategori" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="kategori"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Kategori
               </label>
               <select
@@ -67,7 +73,10 @@ export const PekerjaanJasaSection = () => {
 
             {/* Dropdown Subkategori */}
             <div className="flex-1">
-              <label htmlFor="subkategori" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="subkategori"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Subkategori
               </label>
               <select
@@ -79,13 +88,13 @@ export const PekerjaanJasaSection = () => {
               >
                 <option value="">Pilih Subkategori</option>
                 {selectedKategori &&
-                  SUBKATEGORI_JASA[selectedKategori as keyof typeof SUBKATEGORI_JASA]?.map(
-                    (subkategori: Subkategori) => (
-                      <option key={subkategori.id} value={subkategori.id}>
-                        {subkategori.namaSubkategori}
-                      </option>
-                    )
-                  )}
+                  SUBKATEGORI_JASA[
+                    selectedKategori as keyof typeof SUBKATEGORI_JASA
+                  ]?.map((subkategori: Subkategori) => (
+                    <option key={subkategori.id} value={subkategori.id}>
+                      {subkategori.namaSubkategori}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -113,7 +122,8 @@ export const PekerjaanJasaSection = () => {
                   Pesanan atas nama <strong>{pesanan.namaPelanggan}</strong>
                 </p>
                 <p className="text-sm text-gray-600">
-                  <strong>Biaya:</strong> Rp {pesanan.totalBiaya.toLocaleString()}
+                  <strong>Biaya:</strong> Rp{" "}
+                  {pesanan.totalBiaya.toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-600">
                   <strong>Tanggal Pemesanan:</strong>{" "}
@@ -124,13 +134,13 @@ export const PekerjaanJasaSection = () => {
                   {new Date(pesanan.tanggalPekerjaan).toLocaleDateString()}
                 </p>
                 <p className="text-sm text-gray-600">
-                    <strong>Status Kerjakan:</strong> {pesanan.statusKerjakan}
+                  <strong>Status Kerjakan:</strong> {pesanan.statusKerjakan}
                 </p>
                 <button
-                onClick={() => handleUpdateStatus(pesanan.id)}
-                className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  onClick={() => handleUpdateStatus(pesanan.id)}
+                  className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                 >
-                Kerjakan Pesanan
+                  Kerjakan Pesanan
                 </button>
               </CardContent>
             </Card>
