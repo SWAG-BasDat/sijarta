@@ -6,5 +6,6 @@ export interface Pesanan {
     tanggalPekerjaan: string;
     totalBiaya: number;
     status: string;
+    
   }
   
