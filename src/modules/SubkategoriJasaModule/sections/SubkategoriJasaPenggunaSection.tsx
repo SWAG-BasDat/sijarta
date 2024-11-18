@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { SubkategoriProps, Service } from "../interface";
 import { useRouter } from "next/navigation";
 import { PemesananModal } from "../components/PemesananModal";
-import { CONTOH_TESTI } from "@/modules/TestimoniModule/constant"
 
 interface Props {
   data: SubkategoriProps;
