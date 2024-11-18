@@ -22,7 +22,7 @@ export const HomepageSection = () => {
   );
 
   // Handle redirect to the subcategory page
-  const handleRedirect = (subcategoryId: number) => {
+  const handleRedirect = () => {
     router.push(`/subkategorijasa`);
   };
 
@@ -123,7 +123,7 @@ export const HomepageSection = () => {
                           .map((subcategory) => (
                             <li
                               key={subcategory.id}
-                              onClick={() => handleRedirect(subcategory.id)}
+                              onClick={() => handleRedirect()}
                               className="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline"
                             >
                               {subcategory.name}
