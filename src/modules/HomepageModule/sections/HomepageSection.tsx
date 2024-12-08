@@ -1,30 +1,129 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { categories } from "../constant";
 import { Card, CardContent } from "@/components/ui/card"; // Assuming Card components are available
 import { Badge } from "@/components/ui/badge"; // Assuming Badge components are available
 import { Search, ChevronDown, List } from "lucide-react"; // Add ChevronDown icon from lucide-react
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL; // Assuming API URL is stored in environment variables
+
 export const HomepageSection = () => {
+  const [categories, setCategories] = useState<any[]>([]); // Adjust type as necessary
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Filter categories based on the dropdown and search bar
-  const filteredCategories = categories.filter(
-    (category) =>
-      (!selectedCategory || category.id === selectedCategory) &&
-      category.subcategories.some((subcategory) =>
-        subcategory.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+  // Function to fetch all categories
+  const fetchAllCategories = async () => {
+    if (!API_URL) {
+      setError("API URL not configured");
+      setLoading(false);
+      return;
+    }
 
-  // Handle redirect to the subcategory page
+    try {
+      setLoading(true);
+      const categoryRes = await fetch(`${API_URL}/kategorijasa`);
+      if (!categoryRes.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+
+      const categoryData = await categoryRes.json();
+      const mappedCategories = categoryData.map((category: any) => ({
+        id: category.id,
+        name: category.namakategori,
+        subcategories: category.subcategories || [],
+      }));
+
+      setCategories(mappedCategories);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch category by ID
+  const fetchCategoryById = async (id: number) => {
+    if (!API_URL) {
+      setError("API URL not configured");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/api/kategorijasa/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch category");
+      }
+
+      const categoryData = await response.json();
+      const mappedCategory = {
+        id: categoryData.id,
+        name: categoryData.namakategori,
+        subcategories: categoryData.subcategories || [],
+      };
+      setCategories([mappedCategory]); // Set a single category (based on ID)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch all categories when no category is selected
+    if (!selectedCategory) {
+      fetchAllCategories();
+    } else {
+      // Fetch category by selected ID
+      fetchCategoryById(selectedCategory);
+    }
+  }, [selectedCategory]); // Trigger whenever selectedCategory changes
+
+  // Inside onChange handler of dropdown
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSelectedCategory = Number(e.target.value) || null;
+    console.log("selectedCategory updated to: ", newSelectedCategory);
+    setSelectedCategory(newSelectedCategory);
+  };
+
+  // Filter categories based on the dropdown and search bar
+  const filteredCategories = categories.filter((category) => {
+    const matchesCategory = !selectedCategory || category.id === selectedCategory;
+    const matchesCategoryName = category.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesSubcategories =
+      category.subcategories?.some((subcategory: any) =>
+        subcategory.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ) || false;
+
+    return matchesCategory && (matchesCategoryName || matchesSubcategories);
+  });
+
   const handleRedirect = () => {
     router.push(`/subkategorijasa`);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-xl text-blue-900">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-xl text-red-600">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -43,26 +142,20 @@ export const HomepageSection = () => {
         <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
           {/* Dropdown Button */}
           <div className="relative w-full md:w-1/3">
-            <select
-              value={selectedCategory || ""}
-              onChange={(e) =>
-                setSelectedCategory(Number(e.target.value) || null)
-              }
-              className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 cursor-pointer transition-all hover:border-blue-600 appearance-none"
-            >
-              <option value="" className="py-2 px-4">
-                Semua Kategori
+          <select
+            value={selectedCategory ?? ""} // Ensure that selectedCategory is either a number or null
+            onChange={(e) => setSelectedCategory(Number(e.target.value) || null)} // Set to null if no value is selected
+            className="border border-gray-300 rounded-lg py-3 px-4 w-full bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 cursor-pointer transition-all hover:border-blue-600 appearance-none"
+          >
+            <option value="" className="py-2 px-4">
+              Semua Kategori
+            </option>
+            {categories.map((category: any) => (
+              <option key={category.id} value={category.id} className="py-2 px-4">
+                {category.name}
               </option>
-              {categories.map((category) => (
-                <option
-                  key={category.id}
-                  value={category.id}
-                  className="py-2 px-4"
-                >
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            ))}
+          </select>
             <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
           </div>
 
@@ -99,7 +192,7 @@ export const HomepageSection = () => {
                 )}
 
                 {/* Render filtered categories */}
-                {filteredCategories.map((category) => (
+                {filteredCategories.map((category: any) => (
                   <Card
                     key={category.id}
                     className="border hover:border-blue-900 transition-all"
@@ -110,25 +203,30 @@ export const HomepageSection = () => {
                           variant="outline"
                           className="bg-blue-50 border-blue-900 text-blue-900"
                         >
-                          {category.name}
+                          {category.name} {/* Always display the category name */}
                         </Badge>
                       </div>
                       <ul className="space-y-4">
-                        {category.subcategories
-                          .filter((subcategory) =>
-                            subcategory.name
-                              .toLowerCase()
-                              .includes(searchTerm.toLowerCase())
-                          )
-                          .map((subcategory) => (
-                            <li
-                              key={subcategory.id}
-                              onClick={() => handleRedirect()}
-                              className="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline"
-                            >
-                              {subcategory.name}
-                            </li>
-                          ))}
+                        {/* Check if subcategories exist */}
+                        {category.subcategories?.length > 0 ? (
+                          category.subcategories
+                            .filter((subcategory: any) =>
+                              subcategory.name
+                                .toLowerCase()
+                                .includes(searchTerm.toLowerCase())
+                            )
+                            .map((subcategory: any) => (
+                              <li
+                                key={subcategory.id}
+                                onClick={() => handleRedirect()}
+                                className="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline"
+                              >
+                                {subcategory.name}
+                              </li>
+                            ))
+                        ) : (
+                          <div className="text-gray-500">Tidak ada subkategori</div>
+                        )}
                       </ul>
                     </CardContent>
                   </Card>
