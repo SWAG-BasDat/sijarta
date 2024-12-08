@@ -10,8 +10,9 @@ export interface VoucherProps {
 export interface PromoProps {
   kode: string;
   tanggalAkhirBerlaku: string;
+  potongan: string;
+  minTransaksi: number;
 }
-
 export interface SuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
