@@ -12,11 +12,16 @@ const StatusPekerjaanJasaSection = () => {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const pekerjaId = localStorage.getItem('userId') || 'default-user-id';
- 
+  const [pekerjaId, setPekerjaId] = useState<string>("default-user-id");
+
+  useEffect(() => {
+    setPekerjaId(localStorage.getItem("userId") || "default-user-id");
+  }, []);
 
   useEffect(() => {
     const fetchPesanan = async () => {
+      if (!pekerjaId) return;
+
       try {
         setLoading(true);
         const url = new URL(`${API_URL}/api/status-pekerjaan/${pekerjaId}`);
@@ -37,7 +42,7 @@ const StatusPekerjaanJasaSection = () => {
     };
 
     fetchPesanan();
-  }, [searchName, selectedStatus]);
+  }, [searchName, selectedStatus, pekerjaId]);
 
   // Update status pekerjaan
   const handleUpdateStatus = async (pesananId: string, action: number) => {
@@ -86,7 +91,10 @@ const StatusPekerjaanJasaSection = () => {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Input Nama Jasa */}
             <div className="flex-1">
-              <label htmlFor="nama-jasa" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="nama-jasa"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Nama Jasa
               </label>
               <input
@@ -101,7 +109,10 @@ const StatusPekerjaanJasaSection = () => {
 
             {/* Dropdown Status */}
             <div className="flex-1">
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Status
               </label>
               <select
@@ -111,9 +122,15 @@ const StatusPekerjaanJasaSection = () => {
                 onChange={(e) => setSelectedStatus(e.target.value || null)}
               >
                 <option value="">Semua Status</option>
-                <option value="Menunggu pekerja berangkat">Menunggu Pekerja Berangkat</option>
-                <option value="Pekerja tiba di lokasi">Pekerja Tiba di Lokasi</option>
-                <option value="Pelayanan jasa sedang dilakukan">Pelayanan Jasa Sedang Dilakukan</option>
+                <option value="Menunggu pekerja berangkat">
+                  Menunggu Pekerja Berangkat
+                </option>
+                <option value="Pekerja tiba di lokasi">
+                  Pekerja Tiba di Lokasi
+                </option>
+                <option value="Pelayanan jasa sedang dilakukan">
+                  Pelayanan Jasa Sedang Dilakukan
+                </option>
                 <option value="Pesanan selesai">Pesanan Selesai</option>
               </select>
             </div>
@@ -124,16 +141,21 @@ const StatusPekerjaanJasaSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading && <div>Loading...</div>}
           {error && <div>Error: {error}</div>}
-          {!loading && !error && pesananList.length === 0 && <div>Data tidak ditemukan.</div>}
+          {!loading && !error && pesananList.length === 0 && (
+            <div>Data tidak ditemukan.</div>
+          )}
           {pesananList.map((pesanan) => (
             <Card key={pesanan.pesanan_id} className="shadow-lg">
               <CardContent className="p-6">
-                <h3 className="font-semibold text-lg mb-2">{pesanan.nama_jasa}</h3>
+                <h3 className="font-semibold text-lg mb-2">
+                  {pesanan.nama_jasa}
+                </h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Pesanan atas nama <strong>{pesanan.nama_pelanggan}</strong>
                 </p>
                 <p className="text-sm text-gray-600">
-                  <strong>Biaya:</strong> Rp {Number(pesanan.total_biaya).toLocaleString()}
+                  <strong>Biaya:</strong> Rp{" "}
+                  {Number(pesanan.total_biaya).toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-600">
                   <strong>Status:</strong> {pesanan.status}
