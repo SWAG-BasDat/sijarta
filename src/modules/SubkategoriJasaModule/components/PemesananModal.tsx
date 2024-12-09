@@ -7,11 +7,41 @@ export const PemesananModal = ({ service, onClose, onSubmit }: PemesananModalPro
   const [kodeDiskon, setKodeDiskon] = useState("");
   const [metodePembayaran, setMetodePembayaran] = useState("");
 
-  const handleSubmit = () => {
-    // Ensure you only pass the required arguments (serviceName and userName)
-    onSubmit(service.session, userName);
-    onClose();
-  };
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  const handleSubmit = async () => {
+    try {
+      // Construct the payload to send to the backend
+      const payload = {
+        sesi: service.session,
+        harga: service.price,
+        user_name: userName,
+        tanggal_pemesanan: tanggalPemesanan,
+        kode_diskon: kodeDiskon,
+        metode_pembayaran: metodePembayaran,
+      };
+  
+      // Send the POST request to the backend
+      const response = await fetch(`${API_URL}/sesilayanan/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to place the order");
+      }
+  
+      const responseData = await response.json();
+      alert(`Pesanan untuk layanan ${responseData.pekerja.sesi} berhasil ditambahkan!`);
+      onClose(); // Close the modal after successful submission
+    } catch (error) {
+      alert(`Error`);
+    }
+  };  
 
   return (
     <div
