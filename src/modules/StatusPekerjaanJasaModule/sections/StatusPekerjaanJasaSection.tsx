@@ -1,41 +1,80 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { PESANAN_DUMMY, STATUS_PESANAN } from "../constant";
 import { Pesanan } from "../interface";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const StatusPekerjaanJasaSection = () => {
+  const [pesananList, setPesananList] = useState<Pesanan[]>([]);
   const [searchName, setSearchName] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const [filteredPesanan, setFilteredPesanan] = useState<Pesanan[]>(PESANAN_DUMMY);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const pekerjaId = localStorage.getItem('userId') || 'default-user-id';
+ 
 
-  const handleSearch = () => {
-    const filtered = PESANAN_DUMMY.filter((pesanan) => {
-      const matchesName = pesanan.namaSubkategoriPesanan
-        .toLowerCase()
-        .includes(searchName.toLowerCase());
-      const matchesStatus = selectedStatus ? pesanan.status === selectedStatus : true;
-      return matchesName && matchesStatus;
-    });
-    setFilteredPesanan(filtered);
-  };
+  useEffect(() => {
+    const fetchPesanan = async () => {
+      try {
+        setLoading(true);
+        const url = new URL(`${API_URL}/api/status-pekerjaan/${pekerjaId}`);
+        if (searchName) url.searchParams.append("nama_jasa", searchName);
+        if (selectedStatus) url.searchParams.append("status", selectedStatus);
 
-  const handleUpdateStatus = (pesananId: string) => {
-    setFilteredPesanan((prevPesanan) =>
-      prevPesanan.map((pesanan) => {
-        if (pesanan.id === pesananId) {
-          if (pesanan.status === "Menunggu pekerja berangkat") {
-            return { ...pesanan, status: "Pekerja tiba di lokasi" };
-          } else if (pesanan.status === "Pekerja tiba di lokasi") {
-            return { ...pesanan, status: "Pelayanan jasa sedang dilakukan" };
-          } else if (pesanan.status === "Pelayanan jasa sedang dilakukan") {
-            return { ...pesanan, status: "Pesanan selesai" };
-          }
+        const response = await fetch(url.toString());
+        if (!response.ok) {
+          throw new Error("Gagal mengambil data pekerjaan.");
         }
-        return pesanan;
-      })
-    );
+        const data = await response.json();
+        setPesananList(data.status_pekerjaan || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPesanan();
+  }, [searchName, selectedStatus]);
+
+  // Update status pekerjaan
+  const handleUpdateStatus = async (pesananId: string, action: number) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/status-pemesanan/${pekerjaId}/${pesananId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ button_action: action }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Gagal memperbarui status pekerjaan.");
+      }
+
+      const result = await response.json();
+      alert(result.message);
+
+      // Refresh data setelah update status
+      const fetchPesanan = async () => {
+        const url = new URL(`${API_URL}/api/status-pekerjaan/${pekerjaId}`);
+        if (searchName) url.searchParams.append("nama_jasa", searchName);
+        if (selectedStatus) url.searchParams.append("status", selectedStatus);
+
+        const response = await fetch(url.toString());
+        const data = await response.json();
+        setPesananList(data.status_pekerjaan || []);
+      };
+
+      fetchPesanan();
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    }
   };
 
   return (
@@ -72,60 +111,57 @@ const StatusPekerjaanJasaSection = () => {
                 onChange={(e) => setSelectedStatus(e.target.value || null)}
               >
                 <option value="">Semua Status</option>
-                {STATUS_PESANAN.map((status) => (
-                  <option key={status.id} value={status.status}>
-                    {status.status}
-                  </option>
-                ))}
+                <option value="Menunggu pekerja berangkat">Menunggu Pekerja Berangkat</option>
+                <option value="Pekerja tiba di lokasi">Pekerja Tiba di Lokasi</option>
+                <option value="Pelayanan jasa sedang dilakukan">Pelayanan Jasa Sedang Dilakukan</option>
+                <option value="Pesanan selesai">Pesanan Selesai</option>
               </select>
-            </div>
-
-            {/* Search Button */}
-            <div className="flex items-end">
-              <button
-                onClick={handleSearch}
-                className="bg-yellow-300 text-black px-4 py-2 rounded-md hover:bg-yellow-500"
-              >
-                Search
-              </button>
             </div>
           </div>
         </div>
 
         {/* List Pesanan */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPesanan.map((pesanan) => (
-            <Card key={pesanan.id} className="shadow-lg">
+          {loading && <div>Loading...</div>}
+          {error && <div>Error: {error}</div>}
+          {!loading && !error && pesananList.length === 0 && <div>Data tidak ditemukan.</div>}
+          {pesananList.map((pesanan) => (
+            <Card key={pesanan.pesanan_id} className="shadow-lg">
               <CardContent className="p-6">
-                <h3 className="font-semibold text-lg mb-2">
-                  {pesanan.namaSubkategoriPesanan}
-                </h3>
+                <h3 className="font-semibold text-lg mb-2">{pesanan.nama_jasa}</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Pesanan atas nama <strong>{pesanan.namaPelanggan}</strong>
+                  Pesanan atas nama <strong>{pesanan.nama_pelanggan}</strong>
                 </p>
                 <p className="text-sm text-gray-600">
-                  <strong>Biaya:</strong> Rp {pesanan.totalBiaya.toLocaleString()}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <strong>Tanggal Pemesanan:</strong>{" "}
-                  {new Date(pesanan.tanggalPemesanan).toLocaleDateString()}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <strong>Tanggal Pekerjaan:</strong>{" "}
-                  {new Date(pesanan.tanggalPekerjaan).toLocaleDateString()}
+                  <strong>Biaya:</strong> Rp {Number(pesanan.total_biaya).toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-600">
                   <strong>Status:</strong> {pesanan.status}
                 </p>
-                {pesanan.status !== "Pesanan selesai" &&
-                  pesanan.status !== "Pesanan dibatalkan" && (
-                    <button
-                      onClick={() => handleUpdateStatus(pesanan.id)}
-                      className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                    >
-                      Update Status
-                    </button>
-                  )}
+                {pesanan.status === "Menunggu pekerja berangkat" && (
+                  <button
+                    onClick={() => handleUpdateStatus(pesanan.pesanan_id, 1)}
+                    className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  >
+                    Tiba di Lokasi
+                  </button>
+                )}
+                {pesanan.status === "Pekerja tiba di lokasi" && (
+                  <button
+                    onClick={() => handleUpdateStatus(pesanan.pesanan_id, 2)}
+                    className="mt-4 w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                  >
+                    Melakukan Pelayanan Jasa
+                  </button>
+                )}
+                {pesanan.status === "Pelayanan jasa sedang dilakukan" && (
+                  <button
+                    onClick={() => handleUpdateStatus(pesanan.pesanan_id, 3)}
+                    className="mt-4 w-full bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
+                  >
+                    Selesai Melakukan Pelayanan
+                  </button>
+                )}
               </CardContent>
             </Card>
           ))}
