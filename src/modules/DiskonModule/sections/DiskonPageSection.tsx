@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -8,14 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, ShoppingCart, Tag, Percent, Wallet } from "lucide-react";
 import { SuccessModal } from "../components/ModalSukses";
 import { FailureModal } from "../components/ModalGagal";
-import { useSession } from "next-auth/react";
 import { formatCurrency, formatDate, calculateExpiryDate } from "../constant";
 import { VoucherProps, PromoProps } from "../interface";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DiskonPageSection() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [vouchers, setVouchers] = useState<VoucherProps[]>([]);
   const [promos, setPromos] = useState<PromoProps[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,11 +30,11 @@ export default function DiskonPageSection() {
   const [myPayId, setMyPayId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if (status === "authenticated" && session?.user?.id) {
       fetchMyPayDetails(session.user.id);
     }
     fetchVouchersAndPromos();
-  }, [session]);
+  }, [session, status]);
 
   const fetchMyPayDetails = async (userId: string) => {
     try {
@@ -149,18 +149,11 @@ export default function DiskonPageSection() {
     }
   };
 
-  if (loading) {
+  // Loading and error states
+  if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-xl text-blue-900">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-red-600">Error: {error}</div>
       </div>
     );
   }
