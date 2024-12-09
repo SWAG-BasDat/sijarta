@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -8,14 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, ShoppingCart, Tag, Percent, Wallet } from "lucide-react";
 import { SuccessModal } from "../components/ModalSukses";
 import { FailureModal } from "../components/ModalGagal";
-import { useSession } from "next-auth/react";
 import { formatCurrency, formatDate, calculateExpiryDate } from "../constant";
 import { VoucherProps, PromoProps } from "../interface";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DiskonPageSection() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [vouchers, setVouchers] = useState<VoucherProps[]>([]);
   const [promos, setPromos] = useState<PromoProps[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,31 +30,23 @@ export default function DiskonPageSection() {
   const [myPayId, setMyPayId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if (status === "authenticated" && session?.user?.id) {
       fetchMyPayDetails(session.user.id);
     }
     fetchVouchersAndPromos();
-  }, [session]);
+  }, [session, status]);
 
   const fetchMyPayDetails = async (userId: string) => {
     try {
+      console.log("Fetching MyPay details for user:", userId);
+
       const myPayResponse = await fetch(`${API_URL}/mypay/${userId}`);
       if (!myPayResponse.ok) {
         throw new Error("Failed to fetch MyPay details");
       }
       const myPayData = await myPayResponse.json();
+      console.log("MyPay data received:", myPayData);
       setSaldo(myPayData.saldo || 0);
-
-      const formResponse = await fetch(
-        `${API_URL}/mypay/transaction-form/${userId}`
-      );
-      if (!formResponse.ok) {
-        throw new Error("Failed to fetch MyPay form data");
-      }
-      const formData = await formResponse.json();
-      if (formData.metode_bayar_id) {
-        setMyPayId(formData.metode_bayar_id);
-      }
     } catch (err) {
       console.error("Error fetching MyPay details:", err);
       setError("Failed to load MyPay information");
@@ -110,25 +102,37 @@ export default function DiskonPageSection() {
   };
 
   const handleBuyClick = async (voucher: VoucherProps) => {
-    if (!session?.user?.id || !myPayId) {
+    console.log("Attempting purchase with:", {
+      userId: session?.user?.id,
+      voucher: voucher,
+      currentSaldo: saldo,
+    });
+
+    if (!session?.user?.id) {
+      console.log("Purchase blocked due to:", {
+        hasUserId: !!session?.user?.id,
+      });
       setFailureModalOpen(true);
       return;
     }
 
     try {
+      const requestBody = {
+        user_id: session.user.id,
+        kode_voucher: voucher.kode,
+      };
+      console.log("Sending purchase request:", requestBody);
+
       const response = await fetch(`${API_URL}/vouchers/purchase`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user_id: session.user.id,
-          kode_voucher: voucher.kode,
-          metode_bayar_id: myPayId,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
+      console.log("Purchase response:", result);
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to purchase voucher");
@@ -149,18 +153,10 @@ export default function DiskonPageSection() {
     }
   };
 
-  if (loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-xl text-blue-900">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-red-600">Error: {error}</div>
       </div>
     );
   }

@@ -1,11 +1,11 @@
 export interface Kategori {
   id: string;
-  namaKategori: string;
+  nama: string;
 }
 
 export interface Subkategori {
   id: string;
-  namaSubkategori: string;
+  nama: string;
 }
 
 export interface Pesanan {
@@ -18,4 +18,5 @@ export interface Pesanan {
   kategoriId: string;
   subkategoriId: string;
   statusKerjakan: string;
+  sesi: number;
 }
