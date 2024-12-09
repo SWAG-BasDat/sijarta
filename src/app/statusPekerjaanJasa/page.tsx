@@ -1,8 +1,8 @@
 import React from "react";
 import StatusPekerjaanJasaModule from "@/modules/StatusPekerjaanJasaModule";
 
-const page = () => {
+const Page = () => {
   return <StatusPekerjaanJasaModule />;
 };
 
-export default page;
+export default Page;
