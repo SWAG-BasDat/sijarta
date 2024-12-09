@@ -1,37 +1,42 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation'; // Use this for programmatic navigation
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const LoginSection = () => {
   const [noHP, setNoHP] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null); // To display success message
 
   const router = useRouter(); // Initialize useRouter hook for navigation
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
+    // Reset messages before submitting
+    setError(null);
+    setSuccess(null);
+
     // Call signIn with redirect: false to handle errors
     const result = await signIn('credentials', {
       redirect: false,
       no_hp: noHP,  // Ensure the field name matches the backend
       pwd: password, // Ensure the field name matches the backend
     });
-  
+
     console.log(result);  // Log the full response to debug
-  
+
     if (result?.error) {
       console.error(result.error);  // Log the error message
-      setError(result.error); 
+      setError(result.error);  // Set error message for display
     } else {
-      setError(null); 
+      setSuccess('Login successful! Redirecting...'); // Set success message for display
+      setError(null);  // Clear error message if login is successful
       router.push('/'); // Navigate to the homepage after successful login
     }    
   };
-  
 
   return (
     <div className="min-h-screen bg-slate-200 flex items-center justify-center py-12 px-6">
@@ -46,6 +51,12 @@ const LoginSection = () => {
         {error && (
           <div className="bg-red-100 text-red-700 p-3 rounded-md">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="bg-green-100 text-green-700 p-3 rounded-md">
+            {success}
           </div>
         )}
 
