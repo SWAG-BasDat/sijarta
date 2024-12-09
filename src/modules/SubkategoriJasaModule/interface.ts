@@ -19,6 +19,8 @@ export interface Worker {
 export interface SubkategoriProps {
     subcategory: string;
     category: string;
+    name: string;
+    categoryid: string;
     description: string;
     services: Service[];
     workers: Worker[];
