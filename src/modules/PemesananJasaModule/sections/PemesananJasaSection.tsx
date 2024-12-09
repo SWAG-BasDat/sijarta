@@ -1,16 +1,41 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { PemesananJasaProps } from "../interface";
 import TestimoniModal from "@/modules/TestimoniModule/components/TestimoniModal";
 
 export const PemesananJasaSection: React.FC<PemesananJasaProps> = ({ orders }) => {
+  const { data: session, status } = useSession();
   const [filterSubkategori, setFilterSubkategori] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [orderData, setOrderData] = useState<any[]>([]); // Initialize with an empty array
+
+  // Get the logged-in user's ID if authenticated
+  let id_pelanggan = "";
+  if (status === "authenticated" && session?.user?.id) {
+    id_pelanggan = session.user.id;
+  }
+
+  // Fetch data when the component mounts
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const pelangganId = id_pelanggan; // Replace with the actual ID of the customer
+        const response = await fetch(`/api/pesanan/${pelangganId}`);
+        const data = await response.json();
+        setOrderData(data); // Set fetched data to the state
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+    
+    fetchOrders();
+  }, []);
 
   // Filter the orders based on the selected filters
-  const filteredOrders = orders.filter((order) => {
+  const filteredOrders = orderData.filter((order) => {
     const matchesSubkategori =
       !filterSubkategori || order.subkategori === filterSubkategori;
     const matchesStatus = !filterStatus || order.status === filterStatus;
@@ -21,9 +46,9 @@ export const PemesananJasaSection: React.FC<PemesananJasaProps> = ({ orders }) =
   });
 
   const uniqueSubcategories = [
-    ...new Set(orders.map((order) => order.subkategori)),
+    ...new Set(orderData.map((order) => order.subkategori)),
   ];
-  const uniqueStatuses = [...new Set(orders.map((order) => order.status))];
+  const uniqueStatuses = [...new Set(orderData.map((order) => order.status))];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -38,63 +63,63 @@ export const PemesananJasaSection: React.FC<PemesananJasaProps> = ({ orders }) =
 
         {/* Filter Options */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Filter Pesanan Jasa</h2>
-        <div className="flex flex-col md:flex-row gap-4">
+          <h2 className="text-xl font-semibold mb-4">Filter Pesanan Jasa</h2>
+          <div className="flex flex-col md:flex-row gap-4">
             {/* Subkategori Filter */}
             <div className="flex-1">
-            <label htmlFor="subkategori" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="subkategori" className="block text-sm font-medium text-gray-700">
                 Subkategori
-            </label>
-            <select
+              </label>
+              <select
                 id="subkategori"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 value={filterSubkategori}
                 onChange={(e) => setFilterSubkategori(e.target.value)}
-            >
+              >
                 <option value="">Semua Subkategori</option>
                 {uniqueSubcategories.map((subcategory) => (
-                <option key={subcategory} value={subcategory}>
+                  <option key={subcategory} value={subcategory}>
                     {subcategory}
-                </option>
+                  </option>
                 ))}
-            </select>
+              </select>
             </div>
 
             {/* Status Filter */}
             <div className="flex-1">
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700">
                 Status
-            </label>
-            <select
+              </label>
+              <select
                 id="status"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-            >
+              >
                 <option value="">Semua Status</option>
                 {uniqueStatuses.map((status) => (
-                <option key={status} value={status}>
+                  <option key={status} value={status}>
                     {status}
-                </option>
+                  </option>
                 ))}
-            </select>
+              </select>
             </div>
 
             {/* Search Input */}
             <div className="flex-1">
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="search" className="block text-sm font-medium text-gray-700">
                 Cari Pesanan
-            </label>
-            <input
+              </label>
+              <input
                 id="search"
                 type="text"
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="Masukkan kata kunci"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-            />
+              />
             </div>
-        </div>
+          </div>
         </div>
 
         {/* Order List */}
@@ -126,17 +151,17 @@ export const PemesananJasaSection: React.FC<PemesananJasaProps> = ({ orders }) =
                     <td className="border border-gray-300 px-4 py-2">{order.namaPekerja}</td>
                     <td className="border border-gray-300 px-4 py-2">{order.status}</td>
                     <td className="border border-gray-300 px-4 py-2">
-                    {order.status === "Menunggu Pembayaran" ||
-                    order.status === "Mencari Pekerja Terdekat" ? (
+                      {order.status === "Menunggu Pembayaran" ||
+                      order.status === "Mencari Pekerja Terdekat" ? (
                         <button
-                        onClick={() => console.log("Cancel order with ID:", order.id)}
-                        className="bg-red-500 text-white py-1 px-4 w-full rounded-lg hover:bg-red-600 text-center"
+                          onClick={() => console.log("Cancel order with ID:", order.id)}
+                          className="bg-red-500 text-white py-1 px-4 w-full rounded-lg hover:bg-red-600 text-center"
                         >
-                        Batalkan
+                          Batalkan
                         </button>
-                    ) : order.status === "Pesanan Selesai" && !order.hasTestimonial ? (
+                      ) : order.status === "Pesanan Selesai" && !order.hasTestimonial ? (
                         <TestimoniModal />
-                    ) : null}
+                      ) : null}
                     </td>
                   </tr>
                 ))}

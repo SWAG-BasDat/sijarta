@@ -7,18 +7,18 @@ export const KATEGORI_JASA = [
   { id: "4", namaKategori: "Massage" },
 ];
 
-export const SUBKATEGORI_JASA: Record<string, Subkategori[]> = {
-  "1": [
-    { id: "1-1", namaSubkategori: "Daily Cleaning" },
-    { id: "1-2", namaSubkategori: "Setrika" },
-    { id: "1-3", namaSubkategori: "Pembersihan Dapur" },
-  ],
-  "2": [
-    { id: "2-1", namaSubkategori: "Cuci Kasur" },
-    { id: "2-2", namaSubkategori: "Cuci Sofa" },
-    { id: "2-3", namaSubkategori: "Cuci Karpet" },
-  ],
-};
+// export const SUBKATEGORI_JASA: Record<string, Subkategori[]> = {
+//   "1": [
+//     { id: "1-1", namaSubkategori: "Daily Cleaning" },
+//     { id: "1-2", namaSubkategori: "Setrika" },
+//     { id: "1-3", namaSubkategori: "Pembersihan Dapur" },
+//   ],
+//   "2": [
+//     { id: "2-1", namaSubkategori: "Cuci Kasur" },
+//     { id: "2-2", namaSubkategori: "Cuci Sofa" },
+//     { id: "2-3", namaSubkategori: "Cuci Karpet" },
+//   ],
+// };
 
 export const PESANAN_DUMMY = [
   {
