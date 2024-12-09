@@ -57,9 +57,9 @@ export const options: NextAuthOptions = {
             namaBank: user.namaBank,
             noRekening: user.noRekening,
             npwp: user.npwp,
-            urlFoto: user.urlFoto,
-            saldoMyPay: user.saldoMyPay,
-            jmlPesananSelesai: user.jmlPesananSelesai,
+            urlFoto: user.url_foto,
+            saldoMyPay: user.saldo_mypay,
+            jmlPesananSelesai: user.jumlah_pesanan_selesai,
             rating: user.rating,
           } as SijartaUser;
         }
