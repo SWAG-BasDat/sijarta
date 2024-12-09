@@ -18,12 +18,12 @@ const SubkategoriJasaModule = () => {
       {isWorker ? (
         <>
           {/* Render WorkerPage */}
-          <PekerjaPage data={SubkategoriJasaPekerjaPage} isJoined={false} />
+          <PekerjaPage />
         </>
       ) : (
         <>
           {/* Render UserPage */}
-          <PenggunaPage data={SubkategoriJasaPenggunaPage} />
+          <PenggunaPage />
         </>
       )}
     </div>
