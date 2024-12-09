@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SubkategoriProps, Service } from "../interface";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { PemesananModal } from "../components/PemesananModal";
 
 interface Props {
@@ -12,7 +13,33 @@ interface Props {
 export const PenggunaPage = ({ data }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const router = useRouter(); // useRouter hook to manage navigation
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [fetchedData, setFetchedData] = useState<SubkategoriProps | null>(null);
+  const router = useRouter();
+
+  const { id_subkategori } = useParams();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!id_subkategori) return; // Avoid fetching if id_subkategori is not available
+
+      try {
+        const response = await fetch(`/api/subkategorijasa/${id_subkategori}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const data = await response.json();
+        setFetchedData(data);
+      } catch (err) {
+        setError("An error occurred while fetching data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []); 
 
   const handleOrderClick = (service: Service) => {
     setSelectedService(service);
@@ -29,19 +56,31 @@ export const PenggunaPage = ({ data }: Props) => {
     router.push(`/subkategorijasa/profile`); // Redirect to the worker's profile page
   };
 
+  // Loading and error handling
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  // If fetchedData is null, fallback to the prop data
+  const displayData = fetchedData || data;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-12 px-4">
         {/* Title Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 text-blue-900">
-            {data.subcategory}
+            {displayData.subcategory}
           </h1>
           <p className="text-lg text-gray-700">
-            <strong>Kategori:</strong> {data.category}
+            <strong>Kategori:</strong> {displayData.category}
           </p>
           <p className="text-gray-600 max-w-2xl mx-auto mt-4">
-            {data.description}
+            {displayData.description}
           </p>
         </div>
 
@@ -54,7 +93,7 @@ export const PenggunaPage = ({ data }: Props) => {
           </div>
           <div className="p-6">
             <ul className="space-y-4">
-              {data.services.map((service, index) => (
+              {displayData.services.map((service, index) => (
                 <li
                   key={index}
                   className="flex justify-between items-center p-4 rounded-lg hover:bg-gray-100 transition-all"
@@ -83,7 +122,7 @@ export const PenggunaPage = ({ data }: Props) => {
           </div>
           <div className="p-6">
             <ul className="space-y-4">
-              {data.workers.map((worker) => (
+              {displayData.workers.map((worker) => (
                 <li
                   key={worker.id}
                   className="text-gray-900 cursor-pointer hover:text-blue-600"
@@ -103,7 +142,7 @@ export const PenggunaPage = ({ data }: Props) => {
           </div>
           <div className="p-6">
             <ul className="space-y-6">
-              {data.testimonials.map((testimonial, index) => (
+              {displayData.testimonials.map((testimonial, index) => (
                 <li
                   key={index}
                   className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"

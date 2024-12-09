@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card"; // Assuming Card components are available
-import { Badge } from "@/components/ui/badge"; // Assuming Badge components are available
-import { Search, ChevronDown, List } from "lucide-react"; // Add ChevronDown icon from lucide-react
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Search, ChevronDown, List } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL; // Assuming API URL is stored in environment variables
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const HomepageSection = () => {
-  const [categories, setCategories] = useState<any[]>([]); // Adjust type as necessary
+  const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState(true);
