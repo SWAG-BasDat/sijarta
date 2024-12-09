@@ -38,23 +38,15 @@ export default function DiskonPageSection() {
 
   const fetchMyPayDetails = async (userId: string) => {
     try {
+      console.log("Fetching MyPay details for user:", userId);
+
       const myPayResponse = await fetch(`${API_URL}/mypay/${userId}`);
       if (!myPayResponse.ok) {
         throw new Error("Failed to fetch MyPay details");
       }
       const myPayData = await myPayResponse.json();
+      console.log("MyPay data received:", myPayData);
       setSaldo(myPayData.saldo || 0);
-
-      const formResponse = await fetch(
-        `${API_URL}/mypay/transaction-form/${userId}`
-      );
-      if (!formResponse.ok) {
-        throw new Error("Failed to fetch MyPay form data");
-      }
-      const formData = await formResponse.json();
-      if (formData.metode_bayar_id) {
-        setMyPayId(formData.metode_bayar_id);
-      }
     } catch (err) {
       console.error("Error fetching MyPay details:", err);
       setError("Failed to load MyPay information");
@@ -110,25 +102,37 @@ export default function DiskonPageSection() {
   };
 
   const handleBuyClick = async (voucher: VoucherProps) => {
-    if (!session?.user?.id || !myPayId) {
+    console.log("Attempting purchase with:", {
+      userId: session?.user?.id,
+      voucher: voucher,
+      currentSaldo: saldo,
+    });
+
+    if (!session?.user?.id) {
+      console.log("Purchase blocked due to:", {
+        hasUserId: !!session?.user?.id,
+      });
       setFailureModalOpen(true);
       return;
     }
 
     try {
+      const requestBody = {
+        user_id: session.user.id,
+        kode_voucher: voucher.kode,
+      };
+      console.log("Sending purchase request:", requestBody);
+
       const response = await fetch(`${API_URL}/vouchers/purchase`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user_id: session.user.id,
-          kode_voucher: voucher.kode,
-          metode_bayar_id: myPayId,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
+      console.log("Purchase response:", result);
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to purchase voucher");
@@ -149,7 +153,6 @@ export default function DiskonPageSection() {
     }
   };
 
-  // Loading and error states
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
