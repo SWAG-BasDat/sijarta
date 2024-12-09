@@ -26,7 +26,7 @@ export const PemesananModal = ({
         return;
       }
 
-      const response = await fetch(`${API_URL}/sesilayanan/add`, {
+      const response = await fetch(`${API_URL}/pesanan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
