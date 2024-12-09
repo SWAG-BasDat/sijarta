@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,12 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, ShoppingCart, Tag, Percent, Wallet } from "lucide-react";
 import { SuccessModal } from "../components/ModalSukses";
 import { FailureModal } from "../components/ModalGagal";
+import { useSession } from "next-auth/react";
 import { formatCurrency, formatDate, calculateExpiryDate } from "../constant";
 import { VoucherProps, PromoProps } from "../interface";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function DiskonPageSection() {
+  const { data: session } = useSession();
   const [vouchers, setVouchers] = useState<VoucherProps[]>([]);
   const [promos, setPromos] = useState<PromoProps[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,36 +25,61 @@ export default function DiskonPageSection() {
   const [selectedVoucher, setSelectedVoucher] = useState<VoucherProps | null>(
     null
   );
-  const [saldo, setSaldo] = useState(100000);
+  const [purchaseResult, setPurchaseResult] = useState<any>(null);
+  const [saldo, setSaldo] = useState(0);
+  const [myPayId, setMyPayId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!API_URL) {
-        setError("API URL not configured");
-        setLoading(false);
-        return;
+    if (session?.user?.id) {
+      fetchMyPayDetails(session.user.id);
+    }
+    fetchVouchersAndPromos();
+  }, [session]);
+
+  const fetchMyPayDetails = async (userId: string) => {
+    try {
+      const myPayResponse = await fetch(`${API_URL}/mypay/${userId}`);
+      if (!myPayResponse.ok) {
+        throw new Error("Failed to fetch MyPay details");
+      }
+      const myPayData = await myPayResponse.json();
+      setSaldo(myPayData.saldo || 0);
+
+      const formResponse = await fetch(
+        `${API_URL}/mypay/transaction-form/${userId}`
+      );
+      if (!formResponse.ok) {
+        throw new Error("Failed to fetch MyPay form data");
+      }
+      const formData = await formResponse.json();
+      if (formData.metode_bayar_id) {
+        setMyPayId(formData.metode_bayar_id);
+      }
+    } catch (err) {
+      console.error("Error fetching MyPay details:", err);
+      setError("Failed to load MyPay information");
+    }
+  };
+
+  const fetchVouchersAndPromos = async () => {
+    try {
+      setLoading(true);
+      const [voucherRes, promoRes] = await Promise.all([
+        fetch(`${API_URL}/vouchers`),
+        fetch(`${API_URL}/promos`),
+      ]);
+
+      if (!voucherRes.ok || !promoRes.ok) {
+        throw new Error(
+          !voucherRes.ok ? "Failed to fetch vouchers" : "Failed to fetch promos"
+        );
       }
 
-      try {
-        setLoading(true);
+      const voucherData = await voucherRes.json();
+      const promoData = await promoRes.json();
 
-        const [voucherRes, promoRes] = await Promise.all([
-          fetch(`${API_URL}/vouchers`),
-          fetch(`${API_URL}/promos`),
-        ]);
-
-        if (!voucherRes.ok || !promoRes.ok) {
-          throw new Error(
-            !voucherRes.ok
-              ? "Failed to fetch vouchers"
-              : "Failed to fetch promos"
-          );
-        }
-
-        const voucherData = await voucherRes.json();
-        const promoData = await promoRes.json();
-
-        const transformedVouchers: VoucherProps[] = Array.isArray(voucherData)
+      setVouchers(
+        Array.isArray(voucherData)
           ? voucherData.map((v: any) => ({
               kode: v.kode || "",
               potongan: `${v.potongan || 0}%`,
@@ -60,36 +88,63 @@ export default function DiskonPageSection() {
               kuotaPenggunaan: Number(v.kuotapenggunaan || 0),
               harga: Number(v.harga || 0),
             }))
-          : [];
+          : []
+      );
 
-        const transformedPromos: PromoProps[] = Array.isArray(promoData)
+      setPromos(
+        Array.isArray(promoData)
           ? promoData.map((p: any) => ({
               kode: p[0] || "",
               tanggalAkhirBerlaku: p[1] || "",
               potongan: `${p[2] || 0}%`,
               minTransaksi: Number(p[3] || 0),
             }))
-          : [];
+          : []
+      );
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(err instanceof Error ? err.message : "Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setVouchers(transformedVouchers);
-        setPromos(transformedPromos);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err instanceof Error ? err.message : "Failed to load data");
-      } finally {
-        setLoading(false);
+  const handleBuyClick = async (voucher: VoucherProps) => {
+    if (!session?.user?.id || !myPayId) {
+      setFailureModalOpen(true);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/vouchers/purchase`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: session.user.id,
+          kode_voucher: voucher.kode,
+          metode_bayar_id: myPayId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to purchase voucher");
       }
-    };
 
-    fetchData();
-  }, []);
-
-  const handleBuyClick = (voucher: VoucherProps) => {
-    if (saldo >= voucher.harga) {
-      setSaldo((prevSaldo) => prevSaldo - voucher.harga);
+      setPurchaseResult(result.data);
       setSelectedVoucher(voucher);
       setSuccessModalOpen(true);
-    } else {
+
+      if (result.data.saldo_tersisa !== undefined) {
+        setSaldo(result.data.saldo_tersisa);
+      }
+
+      fetchVouchersAndPromos();
+    } catch (error) {
+      console.error("Purchase failed:", error);
       setFailureModalOpen(true);
     }
   };
@@ -124,7 +179,7 @@ export default function DiskonPageSection() {
           <div className="mt-4 flex items-center gap-2 bg-white p-3 rounded-lg shadow">
             <Wallet className="w-5 h-5 text-blue-900" />
             <span className="font-medium">
-              Saldo Anda: {formatCurrency(saldo)}
+              Saldo MyPay: {formatCurrency(saldo)}
             </span>
           </div>
         </div>
@@ -197,8 +252,8 @@ export default function DiskonPageSection() {
                           disabled={saldo < voucher.harga}
                         >
                           {saldo < voucher.harga
-                            ? "Saldo Tidak Cukup"
-                            : "Beli Voucher"}
+                            ? "Saldo MyPay Tidak Cukup"
+                            : "Beli dengan MyPay"}
                         </Button>
                       </div>
                     </CardContent>
@@ -266,12 +321,15 @@ export default function DiskonPageSection() {
         </div>
       </div>
 
-      {selectedVoucher && (
+      {selectedVoucher && purchaseResult && (
         <SuccessModal
           isOpen={successModalOpen}
-          onClose={() => setSuccessModalOpen(false)}
+          onClose={() => {
+            setSuccessModalOpen(false);
+            setPurchaseResult(null);
+          }}
           voucherCode={selectedVoucher.kode}
-          expiryDate={calculateExpiryDate(selectedVoucher.jumlahHariBerlaku)}
+          expiryDate={purchaseResult.tgl_akhir}
           quota={selectedVoucher.kuotaPenggunaan}
         />
       )}
