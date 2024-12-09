@@ -1,10 +1,10 @@
 export interface Pesanan {
-    id: string;
-    namaSubkategoriPesanan: string;
-    namaPelanggan: string;
+    pesanan_id: string;
+    nama_jasa: string;
+    nama_pelanggan: string;
     tanggalPemesanan: string;
     tanggalPekerjaan: string;
-    totalBiaya: number;
+    total_biaya: number;
     status: string;
     
   }
