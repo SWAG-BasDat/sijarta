@@ -1,6 +1,9 @@
-export interface Testimonial {
-  nama: string;
+export interface Testimoni {
+  idtrpemesanan: string;
+  tgl: string;
   teks: string;
-  tanggal: string;
   rating: number;
+  nama_pelanggan: string;
+  nama_jasa: string;
+  tanggal_pesanan: string;
 }
