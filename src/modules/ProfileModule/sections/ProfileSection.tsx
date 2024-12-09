@@ -12,6 +12,7 @@ const ProfileSection: React.FC = () => {
   const [workerData, setWorkerData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [customerData, setCustomerData] = useState<any>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,6 +28,22 @@ const ProfileSection: React.FC = () => {
           
           if (response.ok) {
             setWorkerData(data);
+          } else {
+            setError(data.error || 'An error occurred');
+          }
+        } catch (err) {
+          setError('Failed to fetch user data');
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(true);
+        try {
+          const response = await fetch(`${API_URL}/customers/${user.id}`);
+          const data = await response.json();
+          
+          if (response.ok) {
+            setCustomerData(data);
           } else {
             setError(data.error || 'An error occurred');
           }
@@ -99,15 +116,21 @@ const ProfileSection: React.FC = () => {
                   { label: 'Gender', value: user.jenisKelamin === 'L' ? 'Male' : 'Female' },
                   { label: 'Date of Birth', value: new Date(user.tanggalLahir).toLocaleDateString() },
                   { label: 'Address', value: user.alamat },
-                  { label: 'Balance', value: user.saldoMyPay },
-                ].map((item) => (
+                  { label: 'Saldo MyPay', value: user.saldoMyPay },
+                ].filter(Boolean).map((item) => (
                   <div key={item.label} className="flex justify-between text-gray-600">
                     <span>{item.label}</span>
                     <span className="font-semibold text-gray-800">{item.value}</span>
                   </div>
                 ))}
-              </div>
+                {!user.isPekerja && (
+                  <div className="flex justify-between text-gray-600">
+                    <span>Level</span>
+                    <span className="font-semibold text-gray-800">{customerData?.level ?? "N/A"}</span>
+                  </div>
+              )}
             </div>
+          </div>
             
             {/* Pekerja Info Card */}
             {user.isPekerja && (
