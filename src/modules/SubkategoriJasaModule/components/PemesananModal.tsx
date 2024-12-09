@@ -20,26 +20,26 @@ export const PemesananModal = ({
       setIsLoading(true);
       setError("");
 
-      // Validate required fields
       if (!userName || !tanggalPemesanan || !metodePembayaran) {
         setError("Mohon lengkapi semua field yang diperlukan");
         return;
       }
+
+      const requestData = {
+        tanggal_pemesanan: tanggalPemesanan,
+        diskon_id: kodeDiskon || null,
+        metode_bayar_id: metodePembayaran,
+        pelanggan_id: userName,
+        total_pembayaran: service.price,
+        status_pesanan: "Menunggu Pembayaran",
+      };
 
       const response = await fetch(`${API_URL}/pesanan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          sub_kategori_id: service.sub_kategori_id, // Updated to match interface
-          sesi: service.session,
-          harga: service.price,
-          userName: userName,
-          tanggalPemesanan: tanggalPemesanan,
-          kodeDiskon: kodeDiskon,
-          metodePembayaran: metodePembayaran,
-        }),
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) {
@@ -50,11 +50,10 @@ export const PemesananModal = ({
       }
 
       const data = await response.json();
-
-      // Call the original onSubmit with required data
       onSubmit(service.session, userName);
       onClose();
     } catch (error) {
+      console.error("Error:", error);
       setError(
         error instanceof Error
           ? error.message
