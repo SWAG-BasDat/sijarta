@@ -85,7 +85,7 @@ export const PekerjaPage = () => {
       };
   
       // Make the API call to the backend to add the worker to the category
-      const response = await fetch(`${API_URL}/api/subkategorijasa/add_pekerja_to_kategori`, {
+      const response = await fetch(`${API_URL}/subkategorijasa/add_pekerja_to_kategori`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
