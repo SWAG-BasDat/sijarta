@@ -107,8 +107,8 @@ export const PenggunaPage = () => {
   };
 
   const handleProfilPekerja = (workerId: string) => {
-    // Pass both the worker ID and category ID to the worker profile page
-    router.push(`/subkategorijasa/workers/${id_subkategori}/${workerId}`);
+    // Pass both the worker ID to the worker profile page
+    router.push(`/subkategorijasa/profile/${workerId}`);
   };
 
   // Loading state

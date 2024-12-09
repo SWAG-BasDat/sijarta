@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import WorkerProfile from "@/modules/SubkategoriJasaModule/sections/ProfilPekerjaSection";
+import WorkerProfile from "@/modules/SubkategoriJasaModule";
 
 const page = () => {
   return <WorkerProfile />;
