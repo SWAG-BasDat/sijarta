@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import TestimoniSection from "@/modules/TestimoniModule/sections/TestimoniSection";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -39,7 +40,6 @@ export const PekerjaPage = () => {
   const [joinError, setJoinError] = useState<string | null>(null);
   const { id_subkategori } = useParams();
 
-  // Get the logged-in user's ID if authenticated
   let id_pekerja = "";
   if (status === "authenticated" && session?.user?.id) {
     id_pekerja = session.user.id;
@@ -49,7 +49,6 @@ export const PekerjaPage = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch subkategori data
         const subkategoriResponse = await fetch(
           `${API_URL}/subkategorijasa/${id_subkategori}`
         );
@@ -62,7 +61,6 @@ export const PekerjaPage = () => {
         const subkategoriData = await subkategoriResponse.json();
         setData(subkategoriData.data);
 
-        // Fetch services data
         const servicesResponse = await fetch(
           `${API_URL}/sesilayanan/${id_subkategori}`
         );
@@ -270,6 +268,14 @@ export const PekerjaPage = () => {
               )}
             </ul>
           </div>
+        </div>
+
+        <div className="mx-10">
+          <TestimoniSection
+            id_subkategori={
+              Array.isArray(id_subkategori) ? id_subkategori[0] : id_subkategori
+            }
+          />
         </div>
 
         {/* Button Bergabung */}
