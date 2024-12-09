@@ -5,6 +5,7 @@ import { SubkategoriProps, Service, Worker } from "../interface";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { PemesananModal } from "../components/PemesananModal";
+import TestimoniSection from "@/modules/TestimoniModule/sections/TestimoniSection";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -28,17 +29,25 @@ export const PenggunaPage = () => {
 
       try {
         // Fetch subkategori data
-        const subkategoriResponse = await fetch(`${API_URL}/subkategorijasa/${id_subkategori}`);
+        const subkategoriResponse = await fetch(
+          `${API_URL}/subkategorijasa/${id_subkategori}`
+        );
         if (!subkategoriResponse.ok) {
-          throw new Error(`Failed to fetch subkategori data. Status: ${subkategoriResponse.status}`);
+          throw new Error(
+            `Failed to fetch subkategori data. Status: ${subkategoriResponse.status}`
+          );
         }
         const subkategoriData = await subkategoriResponse.json();
         setFetchedData(subkategoriData.data); // Store only the 'data' part
 
         // Fetch services data
-        const servicesResponse = await fetch(`${API_URL}/sesilayanan/${id_subkategori}`);
+        const servicesResponse = await fetch(
+          `${API_URL}/sesilayanan/${id_subkategori}`
+        );
         if (!servicesResponse.ok) {
-          throw new Error(`Failed to fetch services data. Status: ${servicesResponse.status}`);
+          throw new Error(
+            `Failed to fetch services data. Status: ${servicesResponse.status}`
+          );
         }
         const servicesData = await servicesResponse.json();
 
@@ -48,16 +57,22 @@ export const PenggunaPage = () => {
         } else {
           setError("Services data is not an array.");
         }
-        
+
         // Fetch worker data using kategorijasaid from subkategoriData
         const kategorijasaid = subkategoriData.data.categoryid; // Access kategorijasaid from subkategoriData
         if (!kategorijasaid) {
-          throw new Error("Kategorijasaid is missing from the subkategori data.");
+          throw new Error(
+            "Kategorijasaid is missing from the subkategori data."
+          );
         }
 
-        const workersResponse = await fetch(`${API_URL}/subkategorijasa/workers/${kategorijasaid}`);
+        const workersResponse = await fetch(
+          `${API_URL}/subkategorijasa/workers/${kategorijasaid}`
+        );
         if (!workersResponse.ok) {
-          throw new Error(`Failed to fetch workers data. Status: ${workersResponse.status}`);
+          throw new Error(
+            `Failed to fetch workers data. Status: ${workersResponse.status}`
+          );
         }
         const workersData = await workersResponse.json();
 
@@ -69,7 +84,9 @@ export const PenggunaPage = () => {
         }
       } catch (err: any) {
         console.error("Fetch error:", err); // Log the error for debugging
-        setError(`An error occurred while fetching data: ${err.message || err}`);
+        setError(
+          `An error occurred while fetching data: ${err.message || err}`
+        );
       } finally {
         setLoading(false);
       }
@@ -84,7 +101,9 @@ export const PenggunaPage = () => {
   };
 
   const handlePemesananSubmit = (serviceName: string, userName: string) => {
-    alert(`Pesanan untuk layanan: ${serviceName} atas nama ${userName} telah diterima.`);
+    alert(
+      `Pesanan untuk layanan: ${serviceName} atas nama ${userName} telah diterima.`
+    );
   };
 
   const handleProfilPekerja = (workerId: string) => {
@@ -109,17 +128,23 @@ export const PenggunaPage = () => {
       <div className="container mx-auto py-12 px-4">
         {/* Title Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-blue-900">{displayData?.name}</h1>
+          <h1 className="text-4xl font-bold mb-4 text-blue-900">
+            {displayData?.name}
+          </h1>
           <p className="text-lg text-gray-700">
             <strong>Kategori:</strong> {displayData?.category}
           </p>
-          <p className="text-gray-600 max-w-2xl mx-auto mt-4">{displayData?.description}</p>
+          <p className="text-gray-600 max-w-2xl mx-auto mt-4">
+            {displayData?.description}
+          </p>
         </div>
 
         {/* Daftar Sesi Layanan */}
         <div className="bg-white rounded-lg shadow-lg mb-8">
           <div className="p-6 bg-blue-900 rounded-t-lg">
-            <h2 className="text-2xl font-semibold text-white">Daftar Sesi Layanan</h2>
+            <h2 className="text-2xl font-semibold text-white">
+              Daftar Sesi Layanan
+            </h2>
           </div>
           <div className="p-6">
             <ul className="space-y-4">
@@ -146,7 +171,9 @@ export const PenggunaPage = () => {
         {/* Daftar Pekerja */}
         <div className="bg-white rounded-lg shadow-lg mb-8">
           <div className="p-6 bg-blue-900 rounded-t-lg">
-            <h2 className="text-2xl font-semibold text-white">Daftar Pekerja</h2>
+            <h2 className="text-2xl font-semibold text-white">
+              Daftar Pekerja
+            </h2>
           </div>
           <div className="p-6">
             <ul className="space-y-4">
@@ -162,6 +189,11 @@ export const PenggunaPage = () => {
             </ul>
           </div>
         </div>
+        <TestimoniSection
+          id_subkategori={
+            Array.isArray(id_subkategori) ? id_subkategori[0] : id_subkategori
+          }
+        />
       </div>
 
       {/* Modal */}
