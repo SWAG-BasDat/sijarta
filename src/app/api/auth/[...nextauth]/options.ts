@@ -2,6 +2,8 @@ import { NextAuthOptions, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { SijartaUser } from '../../../../types/next-auth';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const saveLocalStorage = (key: string, value: Session) => {
   if (typeof window !== "undefined") {
     window.localStorage.setItem(key, JSON.stringify(value));
@@ -19,65 +21,52 @@ export const options: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        noHP: {
+        no_hp: {
           label: "Phone Number:",
           type: "text",
           placeholder: "Your phone number",
         },
-        password: {
+        pwd: {
           label: "Password:",
           type: "password",
           placeholder: "Your password",
         },
       },
       async authorize(credentials) {
-        const pengguna: SijartaUser = {
-          id: "1",
-          noHP: "081234567890",
-          nama: "Test User",
-          password: "test",
-          jenisKelamin: "L",
-          tanggalLahir: new Date(),
-          alamat: "Test Address",
-          isActive: true,
-          isPekerja: false,
-          saldoMyPay: 0,
-        };
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          body: JSON.stringify(credentials),
+          headers: { "Content-Type": "application/json" },
+        });
 
-        const pekerja: SijartaUser = {
-          id: "2",
-          noHP: "081234567891",
-          nama: "Test Worker",
-          password: "test",
-          jenisKelamin: "P",
-          tanggalLahir: new Date(),
-          alamat: "Test Address",
-          isActive: true,
-          isPekerja: true,
-          namaBank: "Test Bank",
-          noRekening: "1234567890",
-          npwp: "1234567890",
-          urlFoto: "https://github.com/widaputri.png",
-          saldoMyPay: 0,
-          jmlPesananSelesai: 0,
-          rating: 0,
-          kategori: ["Test Category", "Test Category 2", "Test Category 3"],
-        };
+        const user_id = await res.json();
 
-        if (
-          credentials?.noHP === pengguna.noHP &&
-          credentials?.password === pengguna.password
-        ) {
-          return pengguna;
-        } else if (
-          credentials?.noHP === pekerja.noHP &&
-          credentials?.password === pekerja.password
-        ) {
-          return pekerja;
-        } else {
-          return null;
+        // If no error and we have a user id, return a user object with just the id
+        if (res.ok && user_id) {
+          const response = await fetch(`${API_URL}/users/${user_id}`);
+          const user = await response.json();
+          return {
+            id: user.id,
+            noHP: user.no_hp,
+            nama: user.nama,
+            jenisKelamin: user.jenis_kelamin,
+            tanggalLahir: user.tgl_lahir,
+            alamat: user.alamat,
+            isActive: user.isActive,
+            isPekerja: user.is_pekerja,
+            namaBank: user.namaBank,
+            noRekening: user.noRekening,
+            npwp: user.npwp,
+            urlFoto: user.urlFoto,
+            saldoMyPay: user.saldoMyPay,
+            jmlPesananSelesai: user.jmlPesananSelesai,
+            rating: user.rating,
+          } as SijartaUser;
         }
-      },
+
+        // Return null if user data could not be retrieved
+        return null;
+      }
     }),
   ],
 

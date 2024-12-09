@@ -13,21 +13,25 @@ const LoginSection = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     // Call signIn with redirect: false to handle errors
     const result = await signIn('credentials', {
       redirect: false,
-      noHP,
-      password,
+      no_hp: noHP,  // Ensure the field name matches the backend
+      pwd: password, // Ensure the field name matches the backend
     });
-
+  
+    console.log(result);  // Log the full response to debug
+  
     if (result?.error) {
-      setError(result.error); // Display error message
+      console.error(result.error);  // Log the error message
+      setError(result.error); 
     } else {
-      setError(null); // Clear error on success
-      router.push('/'); // Redirect to the home page after successful login
-    }
+      setError(null); 
+      router.push('/'); // Navigate to the homepage after successful login
+    }    
   };
+  
 
   return (
     <div className="min-h-screen bg-slate-200 flex items-center justify-center py-12 px-6">
